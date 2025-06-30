@@ -4,6 +4,7 @@ import { detailfecth } from '../Controller/fetchdetails.controller.js'
 import { carts, fetchcarts, removeproduct, updatedProductQuantity } from "../Controller/addtoCarts.controller.js"
 import { verifyToken } from "../middleware/auth.middleware.js"
 import { orderAllproduct, fetchorder } from "../Controller/Order.controller.js"
+
 const routes = express.Router();
 
 routes.get('/fetchproducts', verifyToken, fetchproducts)   //all product fect on databse show the fe
