@@ -3,7 +3,7 @@ import { fetchproducts } from "../Controller/Allproducts.controller.js"
 import { detailfecth } from '../Controller/fetchdetails.controller.js'
 import { carts, fetchcarts, removeproduct, updatedProductQuantity } from "../Controller/addtoCarts.controller.js"
 import { verifyToken } from "../middleware/auth.middleware.js"
-import { orderAllproduct, fetchorder } from "../Controller/Order.controller.js"
+import { orderAllproduct, fetchorder, fetchsingleorder } from "../Controller/Order.controller.js"
 
 const routes = express.Router();
 
@@ -15,6 +15,7 @@ routes.delete('/removeProductOnCart', verifyToken, removeproduct);
 routes.put('/updatequantity', verifyToken, updatedProductQuantity); //update quntity
 routes.post('/order', verifyToken, orderAllproduct);
 routes.get('/fetchMyorder', verifyToken, fetchorder);
+routes.get('/fetchsingleproductdetials', verifyToken, fetchsingleorder)
 
 
 export default routes;

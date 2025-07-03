@@ -1,4 +1,4 @@
-import { addtowishmodel, removewishlistmodel, fetchwishlistproduct } from "../models/wishlist.models.js";
+import { addtowishmodel, removewishlistmodel, fetchwishlistproduct, fetchdetailsOrder } from "../models/wishlist.models.js";
 
 export const AddtoWishlist = async (req, res) => {
     const user_id = req.body.userid;
@@ -110,3 +110,14 @@ export const fetchwishlist = async (req, res) => {
         });
     }
 };
+
+export const fetchorderdetials = async () => {
+
+    try {
+        await fetchdetailsOrder();
+    } catch (error) {
+        console.log("error controller fetchorder details :", error);
+
+    }
+
+}

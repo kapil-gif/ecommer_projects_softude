@@ -39,7 +39,7 @@ export function fetchwishlistproduct(user_id) {
     console.log("user id in model:", user_id);
 
     const fetchWishlistQuery = `
-        SELECT p.title, p.img, p.price, p.category, u.id AS user_id FROM wishlist w
+        SELECT p.id,p.title, p.img, p.price, p.category, u.id AS user_id FROM wishlist w
         JOIN 
             products p ON w.product_id = p.id JOIN  user u ON w.user_id = u.id WHERE w.user_id = ?`;
 
@@ -55,7 +55,17 @@ export function fetchwishlistproduct(user_id) {
     });
 }
 
-
+export function fetchdetailsOrder(user_id, product_id) {
+    const fetchdetailsorderquery = ``
+    return new Promise((resolve, reject) => {
+        pool.query(fetchdetailsorderquery, [], (err, result) => {
+            if (err) {
+                return reject(err)
+            }
+            return resolve(result);
+        })
+    })
+}
 
 
 
