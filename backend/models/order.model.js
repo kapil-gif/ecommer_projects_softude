@@ -66,6 +66,8 @@ VALUES (?, ?, ?, ?, ?);`
                 if (err) {
                     return reject(err);
                 }
+                // console.log("confromation Api respoce result model:", result);
+
                 return resolve(result)
             })
     })
@@ -74,14 +76,14 @@ VALUES (?, ?, ?, ?, ?);`
 
 export async function insertorderdata(detials) {
     const insertdata = `INSERT INTO order_items (
-       
+       order_id,
         user_id,
         product_id,
         product_title,
         product_img,
         quantity,
         price
-    ) VALUES ( ?, ?, ?, ?, ?, ?);`;
+    ) VALUES ( ?,?, ?, ?, ?, ?, ?);`;
 
     const {
         order_id,
@@ -93,7 +95,7 @@ export async function insertorderdata(detials) {
         price
     } = detials;
 
-    console.log(`📝 Order Item Details in model:
+    console.log(`insert  Order Item Details in model:
 Order ID: ${order_id}
 User ID: ${user_id}
 Product ID: ${product_id}
@@ -107,7 +109,7 @@ Total Price (calculated by DB): ₹${quantity * price}
     return new Promise((resolve, reject) => {
         pool.execute(
             insertdata,
-            [user_id, product_id, product_title, product_img, quantity, price],
+            [order_id, user_id, product_id, product_title, product_img, quantity, price],
             (err, result) => {
                 if (err) {
                     console.error(" DB Error:", err);
@@ -122,7 +124,18 @@ Total Price (calculated by DB): ₹${quantity * price}
 
 
 export async function fetchsigledataorder(id) {
-    const fetchproductByuserID = `select * from order_items where id=?`;
+    const fetchproductByuserID = `SELECT
+  oi.*,
+  o.user_id AS order_user_id,
+  o.total_amount,
+  o.payment_method,
+  o.shipping_address,
+  o.billing_address
+FROM order_items AS oi
+JOIN orders AS o
+  ON oi.order_id = o.id
+WHERE oi.id = ?;
+`;
     console.log("order model user id :", id);
 
     return new Promise((resolve, reject) => {

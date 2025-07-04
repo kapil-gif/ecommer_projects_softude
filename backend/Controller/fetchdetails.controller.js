@@ -4,6 +4,8 @@ export const detailfecth = async (req, res) => {
     //console.log("product_id :", product_id);
     const res_details = await fecthdetails(product_id);
     if (res_details) {
+        console.log("api responce product detsila fetch : ", res_details);
+
         return res.status(200).json({
             success: "true",
             code: "200",

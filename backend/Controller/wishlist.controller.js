@@ -4,7 +4,7 @@ export const AddtoWishlist = async (req, res) => {
     const user_id = req.body.userid;
     const product_id = req.body.productid;
 
-    console.log("wishlist product controller ", user_id, product_id);
+    // console.log("wishlist product controller ", user_id, product_id);
 
     try {
         const responce = await addtowishmodel(user_id, product_id);
@@ -46,9 +46,9 @@ export const removewishlist = async (req, res) => {
     const user_id = req.body.userid;
     const product_id = req.body.productid;
 
-    console.log("remove wishlist product controller", user_id, product_id);
+    //  console.log("remove wishlist product controller", user_id, product_id);
     try {
-        console.log("remove wishlist product ", user_id, product_id);
+        // console.log("remove wishlist product ", user_id, product_id);
         const removewishlistApi = await removewishlistmodel(user_id, product_id);
 
         if (removewishlistApi) {

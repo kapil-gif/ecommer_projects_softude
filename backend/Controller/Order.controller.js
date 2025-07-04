@@ -77,7 +77,7 @@ export const comformorder = async (req, res) => {
 
         const responce = await comformationOrder(detials);
         if (responce) {
-            console.log("responce APi : ", responce);
+            console.log("responce APi confromation calling api  : ", responce);
 
             res.status(200).json({
                 success: true,
@@ -98,56 +98,32 @@ export const comformorder = async (req, res) => {
 }
 
 export const insertorder = async (req, res) => {
+    console.log(" req body controller : ", req.body);
+
     try {
-        const detailsArray = req.body; // This is an array of product objects
-
-        if (!Array.isArray(detailsArray) || detailsArray.length === 0) {
-            return res.status(400).json({
-                success: false,
-                code: "400",
-                message: "No order items provided"
-            });
+        let items = req.body;
+        if (!Array.isArray(items)) {
+            items = [items];
+        }
+        if (items.length === 0) {
+            return res.status(400).json({ success: false, message: "No order items" });
         }
 
-        for (const item of detailsArray) {
-            const {
-                order_id,
-                user_id,
-                product_id,
-                product_title,
-                product_img,
-                quantity,
-                price
-            } = item;
-
-            console.log(`📝 Order Item:
-Order ID: ${order_id}
-User ID: ${user_id}
-Product ID: ${product_id}
-Title: ${product_title}
-Image: ${product_img}
-Quantity: ${quantity}
-Price: ₹${price}
-Total: ₹${quantity * price}
-`);
-
-            await insertorderdata(item); // You may want to batch insert instead of one-by-one
+        const results = [];
+        for (const item of items) {
+            console.log("Inserting item in controller :", item);
+            const result = await insertorderdata(item);
+            //results.push(result);
         }
 
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
-            code: "200",
-            message: "Order items inserted successfully"
+            message: "Order items inserted successfully",
+            data: results
         });
-
     } catch (error) {
-        console.error("❌ Insert order items error:", error);
-        res.status(500).json({
-            success: false,
-            code: "500",
-            message: "Your order was not successful",
-            error
-        });
+        console.error("Insert order items error:", error);
+        return res.status(500).json({ success: false, message: "Order not successful", error });
     }
 };
 
@@ -156,7 +132,7 @@ export const fetchsingleorder = async (req, res) => {
         const id = req.query.orderitems_id;
         console.log("user id in fecthOrder controller :", id);
         const fetchOrder = await fetchsigledataorder(id);
-        console.log("Fetech Api response : ", fetchOrder);
+        console.log("Fetech Api response backend Controller: ", fetchOrder);
 
         if (fetchOrder) {
             return res.status(200).json({
