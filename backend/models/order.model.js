@@ -1,8 +1,11 @@
 import pool from "../config/DbConnection.config.js";
 
 
-//insert the order_items data 
-const orderItemquery = `INSERT INTO order_items (user_id, product_id, product_title, product_img, quantity, price)
+
+export function productOrder(user_Id) {
+
+    //insert the order_items data 
+    const orderItemquery = `INSERT INTO order_items (user_id, product_id, product_title, product_img, quantity, price)
 SELECT 
     c.userId, 
     c.productId, 
@@ -14,8 +17,6 @@ FROM cart c
 JOIN products p ON c.productId = p.id
 WHERE c.userId = ?;
 `
-
-export function productOrder(user_Id) {
     console.log("prodcy order in model user id :", user_Id);
 
     return new Promise((resolve, reject) => {
@@ -24,7 +25,7 @@ export function productOrder(user_Id) {
                 console.log(err);
                 return reject(err)
             }
-            console.log(result);
+            //  console.log(result);
             return resolve(result);
 
         })
@@ -42,7 +43,7 @@ export async function fetchMyorder(user_id) {
                 console.log("err in model :", err);
                 return reject(err)
             }
-            //console.log("result :", result);
+            console.log("result :", result);
             return resolve(result)
         });
     })
@@ -95,16 +96,16 @@ export async function insertorderdata(detials) {
         price
     } = detials;
 
-    console.log(`insert  Order Item Details in model:
-Order ID: ${order_id}
-User ID: ${user_id}
-Product ID: ${product_id}
-Product Title: ${product_title}
-Product Image: ${product_img}
-Quantity: ${quantity}
-Price per unit: ₹${price}
-Total Price (calculated by DB): ₹${quantity * price}
-`);
+    //    // console.log(`insert  Order Item Details in model:
+    // Order ID: ${order_id}
+    // User ID: ${user_id}
+    // Product ID: ${product_id}
+    // Product Title: ${product_title}
+    // Product Image: ${product_img}
+    // Quantity: ${quantity}
+    // Price per unit: ₹${price}
+    // Total Price (calculated by DB): ₹${quantity * price}
+    // `);
 
     return new Promise((resolve, reject) => {
         pool.execute(
@@ -115,7 +116,7 @@ Total Price (calculated by DB): ₹${quantity * price}
                     console.error(" DB Error:", err);
                     return reject(err);
                 }
-                console.log(" Order item inserted:", result);
+                //  console.log(" Order item inserted:", result);
                 return resolve(result);
             }
         );
@@ -123,7 +124,7 @@ Total Price (calculated by DB): ₹${quantity * price}
 }
 
 
-export async function fetchsigledataorder(id) {
+export async function fetchsigledataorder(order_id) {
     const fetchproductByuserID = `SELECT
   oi.*,
   o.user_id AS order_user_id,
@@ -134,12 +135,12 @@ export async function fetchsigledataorder(id) {
 FROM order_items AS oi
 JOIN orders AS o
   ON oi.order_id = o.id
-WHERE oi.id = ?;
+WHERE oi.order_id = ?;
 `;
-    console.log("order model user id :", id);
+    console.log("order model order  id :", order_id);
 
     return new Promise((resolve, reject) => {
-        pool.query(fetchproductByuserID, [id], (err, result) => {
+        pool.query(fetchproductByuserID, [order_id], (err, result) => {
             if (err) {
                 console.log("err in model :", err);
                 return reject(err)
@@ -151,12 +152,12 @@ WHERE oi.id = ?;
 }
 
 
-export async function orderCancle(id) {
-    const fetchproductByuserID = `DELETE FROM order_items WHERE id = ?`;
-    console.log("order model user id :", id);
+export async function orderCancle(order_id) {
+    const fetchproductByuserID = `DELETE FROM order_items WHERE order_id = ?`;
+    console.log("order model user id :", order_id);
 
     return new Promise((resolve, reject) => {
-        pool.query(fetchproductByuserID, [id], (err, result) => {
+        pool.query(fetchproductByuserID, [order_id], (err, result) => {
             if (err) {
                 console.log("err in model :", err);
                 return reject(err)
@@ -164,5 +165,21 @@ export async function orderCancle(id) {
             //console.log("result :", result);
             return resolve(result)
         });
+    })
+}
+
+
+export async function removeCartorderSuccesss(product_id) {
+    console.log("cart id remove sucesss order in cart in model :", product_id);
+
+    const deletesuucesuery = `DELETE FROM cart WHERE productId =?`
+
+    return new Promise((resolve, reject) => {
+        pool.query(deletesuucesuery, [product_id], (err, result) => {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(result);
+        })
     })
 }

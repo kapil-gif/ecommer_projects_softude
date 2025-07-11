@@ -21,11 +21,12 @@ export async function insertDummyProducts() {
                 product.category,
                 product.price,
                 product.discountPercentage,
-                product.images[0],    // img
+                JSON.stringify(product.images), // save whole array
                 product.thumbnail,
                 product.brand,
                 product.rating
             ];
+
 
             try {
                 await pool.execute(insertQuery, values);

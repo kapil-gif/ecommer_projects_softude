@@ -1,4 +1,4 @@
-import { productOrder, fetchMyorder, comformationOrder, insertorderdata, fetchsigledataorder, orderCancle } from "../models/order.model.js"
+import { productOrder, fetchMyorder, comformationOrder, insertorderdata, fetchsigledataorder, orderCancle, removeCartorderSuccesss } from "../models/order.model.js"
 
 export const orderAllproduct = async (req, res) => {
     try {
@@ -37,31 +37,65 @@ export const orderAllproduct = async (req, res) => {
 export const fetchorder = async (req, res) => {
     try {
         const user_id = req.query.userid;
-        console.log("user id in fecthOrder controller :", user_id);
-        const fetchOrder = await fetchMyorder(user_id);
-        console.log("Fetech Api response : ", fetchOrder);
+        console.log("Query fetch order id:", req.query);
 
-        if (fetchOrder) {
-            return res.status(200).json({
-                success: true,
-                code: "200",
-                message: "your order list",
-                fetchOrder
-            })
-        } else {
-            return res.status(500).json({
+        const fetchOrder = await fetchMyorder(user_id); // Flat array
+
+        if (!fetchOrder || fetchOrder.length === 0) {
+            return res.status(404).json({
                 success: false,
-                code: "500",
-                message: "feild fetch your order list",
-                err
-            })
+                code: "404",
+                message: "No orders found for this user."
+            });
         }
+
+        // ✅ Grouping by order_id
+        const groupedOrders = {};
+
+        fetchOrder.forEach(orderItem => {
+            const orderId = orderItem.order_id;
+
+            if (!groupedOrders[orderId]) {
+                groupedOrders[orderId] = {
+                    order_id: orderId,
+                    user_id: orderItem.user_id,
+                    created_at: orderItem.created_at,
+                    products: []
+                };
+            }
+
+            groupedOrders[orderId].products.push({
+                id: orderItem.id,
+                product_id: orderItem.product_id,
+                product_title: orderItem.product_title,
+                product_img: orderItem.product_img,
+                quantity: orderItem.quantity,
+                price: orderItem.price,
+                total: orderItem.total
+            });
+        });
+
+        // Convert object to array
+        const groupedOrdersArray = Object.values(groupedOrders);
+
+        return res.status(200).json({
+            success: true,
+            code: "200",
+            message: "Your grouped order list",
+            orders: groupedOrdersArray
+        });
+
     } catch (error) {
-        console.log(error);
-
+        console.error("Error in fetchorder controller:", error);
+        return res.status(500).json({
+            success: false,
+            code: "500",
+            message: "Failed to fetch your order list",
+            error: error.message
+        });
     }
+};
 
-}
 
 export const comformorder = async (req, res) => {
     try {
@@ -77,7 +111,7 @@ export const comformorder = async (req, res) => {
 
         const responce = await comformationOrder(detials);
         if (responce) {
-            console.log("responce APi confromation calling api  : ", responce);
+            //   console.log("responce APi confromation calling api  : ", responce);
 
             res.status(200).json({
                 success: true,
@@ -111,7 +145,7 @@ export const insertorder = async (req, res) => {
 
         const results = [];
         for (const item of items) {
-            console.log("Inserting item in controller :", item);
+            //  console.log("Inserting item in controller :", item);
             const result = await insertorderdata(item);
             //results.push(result);
         }
@@ -129,9 +163,9 @@ export const insertorder = async (req, res) => {
 
 export const fetchsingleorder = async (req, res) => {
     try {
-        const id = req.query.orderitems_id;
-        console.log("user id in fecthOrder controller :", id);
-        const fetchOrder = await fetchsigledataorder(id);
+        const order_id = req.query.orderItemId;
+        console.log("user id in fecthOrder controller :", order_id);
+        const fetchOrder = await fetchsigledataorder(order_id);
         console.log("Fetech Api response backend Controller: ", fetchOrder);
 
         if (fetchOrder) {
@@ -158,9 +192,9 @@ export const fetchsingleorder = async (req, res) => {
 
 export const cancleOrder = async (req, res) => {
     try {
-        const id = req.query.orderitems_id;
-        console.log("user id in cancleOrder controller :", id);
-        const cancleOrderRes = await orderCancle(id);
+        const order_id = req.query.orderId;
+        console.log("order id in cancleOrder controller :", order_id);
+        const cancleOrderRes = await orderCancle(order_id);
         console.log("Fetech Api response : ", cancleOrderRes);
 
         if (cancleOrderRes) {
@@ -183,4 +217,33 @@ export const cancleOrder = async (req, res) => {
 
     }
 
+}
+
+
+export const orderSuccRemoveCart = async (req, res) => {
+    try {
+        console.log("cart_id in controller : ", req.body);
+        const product_id = req.body.product_id;
+        const deletesuucessOrder = await removeCartorderSuccesss(product_id);
+
+        if (deletesuucessOrder) {
+            res.status(200).json({
+                success: true,
+                code: "200",
+                message: "remove on cart after order successfull",
+                deletesuucessOrder
+            })
+        } else {
+            res.status(500).json({
+                success: false,
+                code: "500",
+                message: " Not remove on cart after order successfull",
+                error
+            })
+        }
+
+    } catch (error) {
+        console.log(" success order remove cart order : ", error);
+
+    }
 }

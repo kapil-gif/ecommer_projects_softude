@@ -4,10 +4,12 @@ import { detailfecth } from '../Controller/fetchdetails.controller.js'
 import { carts, fetchcarts, removeproduct, updatedProductQuantity } from "../Controller/addtoCarts.controller.js"
 import { verifyToken } from "../middleware/auth.middleware.js"
 import { orderAllproduct, fetchorder, fetchsingleorder } from "../Controller/Order.controller.js"
+import { checkRole } from "../middleware/checkRole.js"
 
 const routes = express.Router();
+routes.get("/fetchproducts", verifyToken, fetchproducts);
 
-routes.get('/fetchproducts', verifyToken, fetchproducts)   //all product fect on databse show the fe
+//routes.get('/fetchproducts', verifyToken, fetchproducts)   //all product fect on databse show the fe
 routes.post('/fecthdetails', verifyToken, detailfecth);                 //fecth product detials clickon product
 routes.post('/addtocart', verifyToken, carts);                          //add to cart insert the database
 routes.get('/fetchcart', verifyToken, fetchcarts);         // fecth carts product on show the frontend

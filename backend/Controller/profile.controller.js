@@ -7,7 +7,7 @@ export const profileupdate = async (req, res) => {
         console.log("user id in controler :", id);
 
         const fetchprofiledata = await fetchdataprofile(id);
-        console.log("fetchprofiledata", fetchprofiledata);
+        // console.log("fetchprofiledata", fetchprofiledata);
 
         if (fetchprofiledata) {
             res.status(200).json({

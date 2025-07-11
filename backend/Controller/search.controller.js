@@ -5,7 +5,7 @@ export const searchbotton = async (req, res) => {
         console.log(" request body : ", req.query.category);
 
         const category = req.query.category;
-        console.log("Category in search controller:", category);
+        // console.log("Category in search controller:", category);
 
         const results = await searchCaterogry(category);
 

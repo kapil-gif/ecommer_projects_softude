@@ -3,13 +3,27 @@ import pool from "../config/DbConnection.config.js"
 export const loginmodel = (email, password) => {
 
     return new Promise((resolve, reject) => {
-        const getUserQuery = "SELECT * FROM user WHERE email = ? AND password = ?";
+        const getUserQuery = `SELECT 
+    u.id,
+    u.full_name,
+    u.last_name,
+    u.mobile_no,
+    u.email,
+    u.status,
+    u.role_id,
+    r.name AS role,
+    p.name AS permission
+FROM user u
+JOIN roles r ON u.role_id = r.id
+JOIN role_permissions rp ON rp.role_id = r.id
+JOIN permissions p ON rp.permission_id = p.id
+WHERE u.email = "kapil@gmail.com" AND u.password = "123"; `;
         console.log("email pasword in model login :", email, password);
         pool.query(getUserQuery, [email, password], (err, result) => {
             if (err) {
                 reject(err);
             } else {
-                console.log("result in model login : ", result);
+                // console.log("result in model login : ", result);
                 resolve(result);
             }
 

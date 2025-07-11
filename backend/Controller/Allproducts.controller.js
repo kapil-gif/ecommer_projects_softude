@@ -1,32 +1,26 @@
-
-import fetchdata from "../models/fetchproducts.model..js"
+import fetchdata from "../models/fetchproducts.model..js";
 
 export const fetchproducts = async (req, res) => {
-    const allproducts = await fetchdata();
-    // console.log("get all products in constroller :", allproducts);
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
 
-    if (allproducts)
-        return res.status(200).json({ success: true, statusCode: '200', message: "All Products", allproducts })
-    else
-        return res.status(400).json({ success: false, statusCode: 400, message: "field products" })
+        const allproducts = await fetchdata(offset, limit);
+        //console.log("all product fetch constolerr: ", allproducts);
 
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        res.status(200).json({
+            success: true,
+            statusCode: 200,
+            message: "All Products",
+            allproducts
+        });
+    } catch (err) {
+        console.error("Error fetching products:", err);
+        res.status(500).json({
+            success: false,
+            statusCode: 500,
+            message: "Failed to fetch products"
+        });
+    }
+};
